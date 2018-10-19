@@ -1,22 +1,30 @@
 import org.springframework.cloud.contract.spec.Contract;
 
-Contract.make{
-    request{
+Contract.make {
+    request {
         method 'POST'
         url '/api/validateAddress'
-        headers{
-            header('Content-Type','application/json')
+        headers {
+            header('Content-Type', 'application/json')
         }
-        body([
-                "addresssLine1":"String",
-                "city":"String",
-                "zipCode":"String",
-                "state":"String"
-        ])
+        body('''{
+                "addresssLine1":"1234 abc",
+                "city":"palo",
+                "zipCode":"12345",
+                "state":"AF"
+                }
+        ''')
     }
-    response{
+    response {
         status 200
-        body([[]])
+        headers {
+            header('Content-Type', 'application/json;charset=UTF-8')
+        }
+        body('''
+{
+ "validAddress":true
+}
+''')
 
     }
 }

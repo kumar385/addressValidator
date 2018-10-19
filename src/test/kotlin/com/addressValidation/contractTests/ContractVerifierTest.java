@@ -4,7 +4,6 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.producer.addressValidator.AddressValidatorApplication;
 import com.producer.addressValidator.api.AddressValidationApi;
-import com.producer.addressValidator.validator.AddressValidator;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 import io.restassured.module.mockmvc.specification.MockMvcRequestSpecification;
 import io.restassured.response.ResponseOptions;
@@ -21,7 +20,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import static com.toomuchcoding.jsonassert.JsonAssertion.assertThatJson;
-import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;
+import static io.restassured.module.mockmvc.RestAssuredMockMvc.given;
 import static org.springframework.cloud.contract.verifier.assertion.SpringCloudContractAssertions.assertThat;
 
 
@@ -47,7 +46,7 @@ public class ContractVerifierTest {
         // given:
         MockMvcRequestSpecification request = given()
                 .header("Content-Type", "application/json")
-                .body("{\"addresssLine1\":\"String\",\"city\":\"String\",\"zipCode\":\"String\",\"state\":\"String\"}");
+                .body("{\"addresssLine1\":\"1234 abc\",\"city\":\"palo\",\"zipCode\":\"12345\",\"state\":\"AF\"}");
 
         // when:
         ResponseOptions response = given().spec(request)
@@ -55,8 +54,10 @@ public class ContractVerifierTest {
 
         // then:
         assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.header("Content-Type")).isEqualTo("application/json;charset=UTF-8");
         // and:
         DocumentContext parsedJson = JsonPath.parse(response.getBody().asString());
+        assertThatJson(parsedJson).field("['validAddress']").isEqualTo(true);
     }
 
 }

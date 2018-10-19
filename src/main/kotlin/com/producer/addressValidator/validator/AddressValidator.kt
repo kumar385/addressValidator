@@ -7,14 +7,12 @@ import org.springframework.stereotype.Service
 @Service
 class AddressValidator {
 
-    fun validate(address: Address):List<AddressError>{
-        address.let{
+    fun validate(address: Address):AddressError{
 
-        }
-        if(address.addresssLine1.isEmpty()){
-            return listOf(AddressError(field = "addressline1",message = "addressline1 should not be empty"))
+        if(address.addresssLine1.isEmpty() || address.city.isEmpty() || address.zipCode.isEmpty() || address.state.isEmpty()){
+            return AddressError(false)
         }
 
-        return emptyList()
+        return AddressError(true)
     }
 }
